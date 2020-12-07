@@ -34,16 +34,36 @@ for bag in all_bags:
             contained_by[bag].append(containing_bag)
 
 
-containers = set()
-curr_level = ['shiny gold']
-next_level = []
-while len(curr_level) > 0:
-    for bag in curr_level:
-        for parent in contained_by[bag]:
-            containers.add(parent)
-            next_level.append(parent)
-        curr_level = next_level
+def calculate_containers(bag_name):
+    containers = set()
+    curr_level = [bag_name]
     next_level = []
+    while len(curr_level) > 0:
+        for bag in curr_level:
+            for parent in contained_by[bag]:
+                containers.add(parent)
+                next_level.append(parent)
+            curr_level = next_level
+        next_level = []
+    return(containers)
+# print('\n'.join(containers))
 
-print('\n'.join(containers))
-print(f"Total of {len(containers)} bags")
+
+print(f"Total of {len(calculate_containers('shiny gold'))} bag colors contain a Shiny Gold bag")
+
+
+def calculate_contents(bag_name):
+    total_bags = 0
+    curr_level = [(1, 'shiny gold')]
+    next_level = []
+    while len(curr_level) > 0:
+        for quantity, bag_name in curr_level:
+            for inner_bag in all_bags[bag_name].contains:
+                next_level.append((all_bags[bag_name].contains[inner_bag]*quantity, inner_bag))
+                total_bags += all_bags[bag_name].contains[inner_bag]*quantity
+            curr_level = next_level
+        next_level = []
+    return total_bags
+
+
+print(f"A shiny gold bag containes {calculate_contents('shiny gold')} bags.")
