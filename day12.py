@@ -11,7 +11,7 @@ def rotation(point_to, direction, degrees):
     else:
         rot_mat = np.array([[np.cos(rads), np.sin(rads)],
                    [-np.sin(rads), np.cos(rads)]])
-    return np.dot(rot_mat, point_to).astype(int)
+    return np.round(np.dot(rot_mat, point_to), 0).astype(int)
 
 
 curr = np.array([0, 0])
@@ -31,3 +31,22 @@ with open('data/day12.txt') as f:
             print("Unknown opcode:", opcode)
             break
     print("Manhattan distance is:", np.absolute(curr).sum())
+
+
+ship = np.array([0, 0])
+waypoint = np.array([10, 1])
+
+with open('data/day12.txt') as f:
+    for line in f.readlines():
+        opcode = line[0]
+        param = int(line[1:].strip())
+        if opcode in (directions.keys()):
+            waypoint += directions[opcode] * param
+        elif opcode in ['L', 'R']:
+            waypoint = rotation(waypoint, opcode, param)
+        elif opcode == 'F':
+            ship += waypoint * param
+        else:
+            print("Unknown opcode:", opcode)
+            break
+    print("Manhattan distance is:", np.absolute(ship).sum())
